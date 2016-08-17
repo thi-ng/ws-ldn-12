@@ -1,3 +1,13 @@
+# In order to speed up the build process using the STM32CubeF7 SDK
+# only the uncommented files listed here will be included. The filter
+# is NOT applied to any user sources in /src
+#
+# IMPORTANT:
+# It's the user's responsibility to ensure the selected HAL files
+# are in sync with the config in /src/stm32f7xx_hal_conf.h
+# I.e. if you've enabled a HAL module in the config header file
+# then it also MUST be enabled here!
+
 # CMSIS
 %system_stm32f7xx.c
 
