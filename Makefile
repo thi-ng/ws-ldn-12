@@ -1,15 +1,5 @@
 .NOTPARALLEL:
 
-CC = arm-none-eabi-gcc
-LD = arm-none-eabi-g++
-OBJCOPY = arm-none-eabi-objcopy
-SIZE = arm-none-eabi-size
-
-USER_SRC_DIR = src
-LIBDIR = lib
-BUILD_DIR = obj
-BIN_DIR = bin
-
 ifndef STM_CUBEF7_HOME
 $(error STM_CUBEF7_HOME is not set)
 endif
@@ -18,7 +8,17 @@ ifndef module
 module = ex01
 endif
 
-TARGET_NAME = synth
+CC = arm-none-eabi-gcc
+LD = arm-none-eabi-g++
+OBJCOPY = arm-none-eabi-objcopy
+SIZE = arm-none-eabi-size
+
+USER_SRC_DIR = src
+LIB_DIR = lib
+BUILD_DIR = build/$(module)
+BIN_DIR = bin/$(module)
+
+TARGET_NAME = app
 
 TARGET_ELF = $(BIN_DIR)/$(TARGET_NAME).elf
 TARGET_BIN = $(BIN_DIR)/$(TARGET_NAME).bin
@@ -70,7 +70,9 @@ LIBS = -lm
 
 CFLAGS += -std=c11 -mthumb -mcpu=cortex-m4 -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16 -funsafe-math-optimizations -fsigned-char -ffunction-sections -fdata-sections -Wall
 
-LD_FLAGS += -T STM32F746NGHx_FLASH.ld -Xlinker --gc-sections -Wl,-Map,$(TARGET_NAME).map -specs=nosys.specs -specs=nano.specs
+LD_FLAGS += -L$(LIB_DIR) -Tldscripts/STM32F746NGHx_FLASH.ld
+LD_FLAGS += -Xlinker --gc-sections -Wl,-Map,$(BIN_DIR)/$(TARGET_NAME).map
+LD_FLAGS += -specs=nosys.specs -specs=nano.specs
 
 $(info Building module: $(module))
 
