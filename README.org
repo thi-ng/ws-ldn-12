@@ -3,8 +3,8 @@ ARM / STM32F7 DIY synth workshop
 
 ** Resources
 
-- http://asm.thi.ng/
-- TBD
+- http://asm.thi.ng/ - links to all required SDK & build tools,
+  references, learning resources...
 
 ** Building
 
