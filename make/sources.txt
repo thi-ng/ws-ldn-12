@@ -48,7 +48,6 @@
 %stm32f7xx_hal_ltdc.c
 %stm32f7xx_hal_ltdc_ex.c
 # %stm32f7xx_hal_mdios.c
-# %stm32f7xx_hal_msp_template.c
 # %stm32f7xx_hal_nand.c
 # %stm32f7xx_hal_nor.c
 # %stm32f7xx_hal_pcd.c
@@ -72,9 +71,6 @@
 # %stm32f7xx_hal_sram.c
 %stm32f7xx_hal_tim.c
 %stm32f7xx_hal_tim_ex.c
-# %stm32f7xx_hal_timebase_rtc_alarm_template.c
-# %stm32f7xx_hal_timebase_rtc_wakeup_template.c
-# %stm32f7xx_hal_timebase_tim_template.c
 %stm32f7xx_hal_uart.c
 %stm32f7xx_hal_usart.c
 # %stm32f7xx_hal_wwdg.c
@@ -109,5 +105,5 @@
 # %cc949.c
 # %cc950.c
 # %ccsbcs.c
-%syscall.c
-%unicode.c
+# %syscall.c
+# %unicode.c
