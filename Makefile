@@ -8,6 +8,10 @@ ifndef module
 module = ex01
 endif
 
+ifndef src_index
+	src_index = sources.txt
+endif
+
 CC = arm-none-eabi-gcc
 LD = arm-none-eabi-g++
 OBJCOPY = arm-none-eabi-objcopy
@@ -30,10 +34,8 @@ DEVICE_DIR = $(CMSIS_DIR)/Device/ST/STM32F7xx
 HAL_DIR = $(STM_SRC_ROOT)/STM32F7xx_HAL_Driver
 BSP_DIR = $(STM_SRC_ROOT)/BSP/STM32746G-Discovery
 LL_DIR = $(STM_SRC_ROOT)/BSP/Components
-
-ifndef src_index
-	src_index = sources.txt
-endif
+USBH_DIR = $(STM_CUBEF7_HOME)/Middlewares/ST/STM32_USB_Host_Library
+FATFS_DIR = $(STM_CUBEF7_HOME)/Middlewares/Third_Party/FatFs/src
 
 SRC_FILTER = $(shell grep -v '\#' $(src_index))
 
@@ -48,11 +50,21 @@ BSP_SRC = $(filter $(SRC_FILTER), $(wildcard $(BSP_DIR)/*.c))
 
 LL_SRC = $(addprefix $(LL_DIR),/ft5336/ft5336.c /wm8994/wm8994.c)
 
-SYS_INCLUDES = $(CMSIS_INCLUDES) $(HAL_INCLUDES) $(BSP_INCLUDES)
-SYS_SRC = $(CMSIS_SRC) $(HAL_SRC) $(BSP_SRC) $(LL_SRC)
+USBH_INCLUDES = -I$(USBH_DIR)/Core/Inc -I$(USBH_DIR)/Class/AUDIO/Inc -I$(USBH_DIR)/Class/MSC/Inc
+USBH_SRC = $(filter $(SRC_FILTER), $(wildcard $(USBH_DIR)/Core/Src/*.c))
+USBH_SRC += $(wildcard $(USBH_DIR)/Class/AUDIO/Src/*.c)
+USBH_SRC += $(wildcard $(USBH_DIR)/Class/MSC/Src/*.c)
 
-USER_SRC = $(wildcard $(USER_SRC_DIR)/common/*.c) $(wildcard $(USER_SRC_DIR)/$(module)/*.c)
+FATFS_INCLUDES = -I$(FATFS_DIR) -I$(FATFS_DIR)/drivers
+FATFS_SRC = $(wildcard $(FATFS_DIR)/*.c)
+FATFS_SRC += $(filter $(SRC_FILTER), $(wildcard $(FATFS_DIR)/drivers/*.c))
+FATFS_SRC += $(filter $(SRC_FILTER), $(wildcard $(FATFS_DIR)/option/*.c))
+
+SYS_INCLUDES = $(CMSIS_INCLUDES) $(HAL_INCLUDES) $(BSP_INCLUDES) $(USBH_INCLUDES) $(FATFS_INCLUDES)
+SYS_SRC = $(CMSIS_SRC) $(HAL_SRC) $(BSP_SRC) $(LL_SRC) $(USBH_SRC) $(FATFS_SRC)
+
 USER_INCLUDES += -I$(USER_SRC_DIR) -Iext
+USER_SRC = $(wildcard $(USER_SRC_DIR)/common/*.c) $(wildcard $(USER_SRC_DIR)/$(module)/*.c)
 
 ALL_INCLUDES = $(USER_INCLUDES) $(SYS_INCLUDES)
 ALL_SRC = $(SYS_SRC) $(USER_SRC)

@@ -92,3 +92,22 @@
 # %stm32746g_discovery_sd.c
 %stm32746g_discovery_sdram.c
 %stm32746g_discovery_ts.c
+
+# USBH
+%usbh_core.c
+%usbh_ctlreq.c
+%usbh_ioreq.c
+%usbh_pipes.c
+
+# FatFS
+# %sd_diskio.c
+# %sdram_diskio.c
+# %sram_diskio.c
+%usbh_diskio.c
+# %cc932.c
+# %cc936.c
+# %cc949.c
+# %cc950.c
+# %ccsbcs.c
+%syscall.c
+%unicode.c
