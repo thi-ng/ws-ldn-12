@@ -61,7 +61,8 @@ ASM_SRC = $(DEVICE_DIR)/Source/Templates/gcc/startup_stm32f746xx.s
 ASM_OBJ = $(addprefix $(BUILD_DIR)/, $(notdir $(ASM_SRC:.s=.o)))
 
 C_OBJ = $(addprefix $(BUILD_DIR)/, $(notdir $(ALL_SRC:.c=.o)))
-C_DEPS = $(C_OBJ:.o=.d)
+
+DEPS = $(ASM_OBJ:.o=.d) $(C_OBJ:.o=.d)
 
 DEFINES += -DSTM32F746xx
 
@@ -73,6 +74,8 @@ LD_FLAGS += -T STM32F746NGHx_FLASH.ld -Xlinker --gc-sections -Wl,-Map,$(TARGET_N
 
 $(info Building module: $(module))
 
+# Used to enable rules below, allows building from given source list
+# http://stackoverflow.com/a/24967712/294515
 .SECONDEXPANSION:
 PERCENT = %
 
@@ -99,11 +102,13 @@ $(TARGET_SIZE): $(TARGET_ELF)
 
 $(C_OBJ): %.o : $$(filter $$(PERCENT)/$$(notdir %).c, $(ALL_SRC))
 	@echo compiling: $(notdir $<)
-	@$(CC) $(DEFINES) $(ALL_INCLUDES) $(CFLAGS) -o $@ -c $<
+	@$(CC) $(DEFINES) $(ALL_INCLUDES) $(CFLAGS) -o $@ -c $< -MMD -MP -MF "$(@:%.o=%.d)"
 
 $(ASM_OBJ): %.o : $$(filter $$(PERCENT)/$$(notdir %).s, $(ASM_SRC))
 	@echo assembling: $(notdir $<)
-	@$(CC) $(DEFINES) $(ALL_INCLUDES) $(CFLAGS) -o $@ -c $<
+	@$(CC) $(DEFINES) $(ALL_INCLUDES) $(CFLAGS) -o $@ -c $< -MMD -MP -MF "$(@:%.o=%.d)"
+
+-include $(DEPS)
 
 .PHONY: clean trace
 
@@ -119,4 +124,4 @@ trace:
 	@echo ALL_INCL: $(ALL_INCLUDES)
 	@echo ALL_SRC: $(ALL_SRC)
 	@echo OBJ: $(C_OBJ)
-	@echo C_DEPS: $(C_DEPS)
+	@echo DEPS: $(DEPS)
