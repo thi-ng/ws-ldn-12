@@ -3,22 +3,28 @@
 CC = arm-none-eabi-gcc
 LD = arm-none-eabi-g++
 OBJCOPY = arm-none-eabi-objcopy
+SIZE = arm-none-eabi-size
 
 USER_SRC_DIR = src
 LIBDIR = lib
 BUILD_DIR = obj
 BIN_DIR = bin
 
-ifndef STM_CUBE_HOME
-$(error STM_CUBE_HOME is not set)
+ifndef STM_CUBEF7_HOME
+$(error STM_CUBEF7_HOME is not set)
+endif
+
+ifndef module
+module = ex01
 endif
 
 TARGET_NAME = synth
 
 TARGET_ELF = $(BIN_DIR)/$(TARGET_NAME).elf
 TARGET_BIN = $(BIN_DIR)/$(TARGET_NAME).bin
+TARGET_SIZE = $(BIN_DIR)/$(TARGET_NAME).siz
 
-STM_SRC_ROOT = $(STM_CUBE_HOME)/Drivers
+STM_SRC_ROOT = $(STM_CUBEF7_HOME)/Drivers
 CMSIS_DIR = $(STM_SRC_ROOT)/CMSIS
 DEVICE_DIR = $(CMSIS_DIR)/Device/ST/STM32F7xx
 HAL_DIR = $(STM_SRC_ROOT)/STM32F7xx_HAL_Driver
@@ -40,51 +46,58 @@ HAL_SRC = $(filter $(SRC_FILTER), $(wildcard $(HAL_DIR)/Src/*.c))
 BSP_INCLUDES = -I$(BSP_DIR)
 BSP_SRC = $(filter $(SRC_FILTER), $(wildcard $(BSP_DIR)/*.c))
 
-SYS_INCLUDES = $(CMSIS_INCLUDES) $(HAL_INCLUDES) $(BSP_INCLUDES)
-SYS_SRC = $(CMSIS_SRC) $(HAL_SRC) $(BSP_SRC)
+LL_SRC = $(addprefix $(LL_DIR),/ft5336/ft5336.c /wm8994/wm8994.c)
 
-USER_SRC = $(wildcard $(USER_SRC_DIR)/*.c)
+SYS_INCLUDES = $(CMSIS_INCLUDES) $(HAL_INCLUDES) $(BSP_INCLUDES)
+SYS_SRC = $(CMSIS_SRC) $(HAL_SRC) $(BSP_SRC) $(LL_SRC)
+
+USER_SRC = $(wildcard $(USER_SRC_DIR)/common/*.c) $(wildcard $(USER_SRC_DIR)/$(module)/*.c)
 USER_INCLUDES += -I$(USER_SRC_DIR) -Iext
 
-ALL_INCLUDES = $(SYS_INCLUDES) $(USER_INCLUDES)
+ALL_INCLUDES = $(USER_INCLUDES) $(SYS_INCLUDES)
 ALL_SRC = $(SYS_SRC) $(USER_SRC)
 
 ASM_SRC = $(DEVICE_DIR)/Source/Templates/gcc/startup_stm32f746xx.s
 ASM_OBJ = $(addprefix $(BUILD_DIR)/, $(notdir $(ASM_SRC:.s=.o)))
 
-OBJECTS = $(addprefix $(BUILD_DIR)/, $(notdir $(ALL_SRC:.c=.o)))
-DEPS = $(OBJECTS:.o=.d)
+C_OBJ = $(addprefix $(BUILD_DIR)/, $(notdir $(ALL_SRC:.c=.o)))
+C_DEPS = $(C_OBJ:.o=.d)
 
 DEFINES += -DSTM32F746xx
 
-LIBS = -lm -lc
+LIBS = -lm
 
 CFLAGS += -std=c11 -mthumb -mcpu=cortex-m4 -march=armv7e-m -mfloat-abi=hard -mfpu=fpv4-sp-d16 -funsafe-math-optimizations -fsigned-char -ffunction-sections -fdata-sections -Wall
 
 LD_FLAGS += -T STM32F746NGHx_FLASH.ld -Xlinker --gc-sections -Wl,-Map,$(TARGET_NAME).map -specs=nosys.specs -specs=nano.specs
 
+$(info Building module: $(module))
+
 .SECONDEXPANSION:
 PERCENT = %
 
-all: $(BIN_DIR) $(BUILD_DIR) $(TARGET_ELF) $(TARGET_BIN)
+all: $(BUILD_DIR) $(BIN_DIR) $(TARGET_ELF) $(TARGET_BIN) $(TARGET_SIZE)
 	@:
-
-$(BIN_DIR):
-	@echo Creating $(BIN_DIR)
-	mkdir -p $(BIN_DIR)
 
 $(BUILD_DIR):
 	@echo Creating $(BUILD_DIR)
-	mkdir -p $(BUILD_DIR)
+	@mkdir -p $(BUILD_DIR)
+
+$(BIN_DIR):
+	@echo Creating $(BIN_DIR)
+	@mkdir -p $(BIN_DIR)
+
+$(TARGET_ELF): $(C_OBJ) $(ASM_OBJ)
+	$(CC) $(CFLAGS) $(LD_FLAGS) -o $@ $^ $(LIBS)
 
 $(TARGET_BIN): $(TARGET_ELF)
 	@echo Creating flash image: $@
-	$(OBJCOPY) -O binary $< $@
+	@$(OBJCOPY) -O binary $< $@
 
-$(TARGET_ELF): $(OBJECTS) $(ASM_OBJ)
-	$(CC) $(CFLAGS) $(LD_FLAGS) -o $@ $^ $(LIBS)
+$(TARGET_SIZE): $(TARGET_ELF)
+	@$(SIZE) --format=berkeley -x --totals $(TARGET_ELF)
 
-$(OBJECTS): %.o : $$(filter $$(PERCENT)/$$(notdir %).c, $(ALL_SRC))
+$(C_OBJ): %.o : $$(filter $$(PERCENT)/$$(notdir %).c, $(ALL_SRC))
 	@echo compiling: $(notdir $<)
 	@$(CC) $(DEFINES) $(ALL_INCLUDES) $(CFLAGS) -o $@ -c $<
 
@@ -105,5 +118,5 @@ trace:
 	@echo HAL: $(HAL_SRC)
 	@echo ALL_INCL: $(ALL_INCLUDES)
 	@echo ALL_SRC: $(ALL_SRC)
-	@echo OBJ: $(OBJECTS)
-	@echo DEPS: $(DEPS)
+	@echo OBJ: $(C_OBJ)
+	@echo C_DEPS: $(C_DEPS)
