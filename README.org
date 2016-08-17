@@ -1,0 +1,39 @@
+* thi.ng/ws-ldn-12
+ARM / STM32F7 DIY synth workshop
+
+** Resources
+
+- http://asm.thi.ng/
+- TBD
+
+** Building
+
+This repo contains a flexible =Makefile= to build all included
+projects. The setup features:
+
+- easily customizable device config & linker scripts
+- no requirement to manually copy STM Cube SDK sources
+- catalog file(s) to selectively exclude various SDK source files (see
+  [[./make/sources.txt][/make/sources.txt]], can be overridden per project)
+- config flags to include USBH & FatFs middlewares
+- support for multiple sub-projects (with & without shared sources)
+- individual module (sub-project) configs (e.g. [[./make/modules/ex01.make][/make/modules/ex01.make]])
+- separate build & target folders for each module
+
+Currently only the STM32F746-DISCO board is supported, but additional
+board configurations can be easily added (see [[./make/devices/][/make/devices/]] for
+reference).
+
+*IMPORTANT:* The =Makefile= requires the env var =STM_CUBE_HOME= to be
+set to the root of your STM SDK directory, e.g.
+=~/dev/arm/STM32Cube_FW_F7_V1.4.0=.
+
+#+BEGIN_SRC shell
+  export STM_CUBE_HOME=~/dev/arm/STM32Cube_FW_F7_V1.4.0
+
+  make module=ex01 clean
+  make module=ex01 -j4
+
+  # flash device
+  st-flash --reset write bin/ex01/app.bin 0x8000000
+#+END_SRC
