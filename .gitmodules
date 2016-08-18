@@ -1,0 +1,8 @@
+[submodule "ext/ct-head"]
+	path = ext/ct-head
+	url = https://github.com/thi-ng/ct-head
+	branch = master
+[submodule "ext/ct-gui"]
+	path = ext/ct-gui
+	url = https://github.com/thi-ng/ct-gui
+	branch = master
