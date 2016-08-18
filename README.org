@@ -1,10 +1,37 @@
 * thi.ng/ws-ldn-12
-ARM / STM32F7 DIY synth workshop
+ARM / STM32F7 DIY synth workshop (STM32F746-DISCO)
 
 ** Resources
 
 - http://asm.thi.ng/ - links to all required SDK & build tools,
   references, learning resources...
+
+** Examples
+*** ex01 - blinky
+[[./src/ex01/main.c][Source]]
+
+Simple Hello World LED blink example & demo of using EXTI interrupt to
+react to user button. Stops/starts blinking each time button is
+pressed.
+
+*** ex02 - LCD, touchscreen & GUI basics
+[[./src/ex02/main.c][Source]]
+
+Basic demonstration of working with BSP LCD & touchscreen modules, as
+well as intro to working w/ external libraries (here
+[[http://thi.ng/ct-gui][thi.ng/ct-gui]]).
+
+Edit the source file to uncomment different demo modes:
+
+- =demoWelcome()= - simple text rendering & random dots, non-interactive
+- =demoScribble()= - 5 point multi-touch drawing
+- =demoGUI()= - basic GUI usage example (dials control nothing)
+
+*** ex03 - Timers
+
+*** ex04 - Oscillators
+
+*** ex05 - Synth basics
 
 ** Building
 
