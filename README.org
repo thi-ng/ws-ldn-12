@@ -30,6 +30,11 @@ Edit the source file to uncomment different demo modes:
 - =demoGUI()= - basic GUI usage example (dials control nothing)
 
 *** ex03 - Timers
+[[./src/ex03/main.c][Source]]
+
+Basic timer setup & multi-tasking example. Timer runs @ 10kHz and
+controls simple LED blinking task. Task can be suspended interactively
+by pressing user button.
 
 *** ex04 - Oscillators
 [[./src/ex04/main.c][Source]]
