@@ -1,6 +1,8 @@
 * thi.ng/ws-ldn-12
 ARM / STM32F7 DIY synth workshop (STM32F746-DISCO)
 
+[[http://workshop.thi.ng/#WS-LDN-12][Workshop details & signup]]
+
 ** Resources
 
 - http://asm.thi.ng/ - links to all required SDK & build tools,
