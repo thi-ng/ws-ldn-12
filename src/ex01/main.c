@@ -12,6 +12,8 @@ int main() {
   SystemClock_Config();
 
   BSP_LED_Init(LED_GREEN);
+
+  // configure user button in ISR mode
   BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_EXTI);
 
   while (1) {
@@ -25,24 +27,14 @@ int main() {
   return 0;
 }
 
+void EXTI15_10_IRQHandler(void) {
+  HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN);
+}
+
 void HAL_GPIO_EXTI_Callback(uint16_t pin) {
   if (pin == KEY_BUTTON_PIN) {
     while (BSP_PB_GetState(BUTTON_KEY) != RESET)
       ;
     do_blink = !do_blink;
   }
-}
-
-void Error_Handler(void) {
-  BSP_LED_On(LED_GREEN);
-  while (1) {
-  }
-}
-
-void SysTick_Handler(void) {
-  HAL_IncTick();
-}
-
-void EXTI15_10_IRQHandler(void) {
-  HAL_GPIO_EXTI_IRQHandler(KEY_BUTTON_PIN);
 }

@@ -6,13 +6,10 @@
 
 #include "common/clockconfig.h"
 
-static CTGUI gui;
-static CT_Smush rnd;
-
 static TS_StateTypeDef rawTouchState;
-static CTGUI_TouchState touchState;
 
 // clang-format off
+// sprite sheet definition: 12 steps, 48x48, RGB (24bit)
 static const CTGUI_SpriteSheet dialSheet = {
   .pixels = ctgui_dustknob48_12_rgb888,
   .sprite_width = 48,
@@ -30,18 +27,16 @@ int main() {
   CPU_CACHE_Enable();
   HAL_Init();
   SystemClock_Config();
-
-  ct_smush_init(&rnd, 0xdecafbad);
-
   BSP_LCD_Init();
 
   if (BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize()) == TS_OK) {
     BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER, SDRAM_DEVICE_ADDR);
     BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
 
-    //demoWelcome();
+    // Only enable ONE of the following:
+    demoWelcome();
     //demoScribble();
-    demoGUI();
+    //demoGUI();
   }
   return 0;
 }
@@ -58,6 +53,11 @@ static void demoWelcome() {
                           CENTER_MODE);
   const float w = BSP_LCD_GetXSize() - 5;
   const float h = BSP_LCD_GetYSize() - 5;
+
+  CT_Smush rnd;
+  // seed random number generator
+  ct_smush_init(&rnd, 0xdecafbad);
+
   while (1) {
     BSP_LCD_SetTextColor((ct_smush(&rnd) & 0xffffff) | 0xff000000);
     BSP_LCD_FillCircle(ct_smush_minmax(&rnd, 5.f, w),
@@ -86,6 +86,8 @@ static void demoScribble() {
 }
 
 static void demoGUI() {
+  CTGUI gui;
+  CTGUI_TouchState touchState;
   ctgui_init(&gui, 3, &CTGUI_FONT, 0xff59626c, 0xffffffff);
   ctgui_dialbutton(&gui, 0, "Volume", 135, 100, 0.0f, 0.025f, &dialSheet, NULL);
   ctgui_dialbutton(&gui, 1, "Freq", 205, 100, 0.0f, 0.025f, &dialSheet, NULL);
@@ -103,19 +105,9 @@ static void demoGUI() {
   }
 }
 
-void Error_Handler(void) {
-  BSP_LED_On(LED_GREEN);
-  while (1) {
-  }
-}
-
-void SysTick_Handler(void) {
-  HAL_IncTick();
-}
-
+// Interrupt handler shared between:
+// SD_DETECT pin, USER_KEY button and touch screen interrupt
 void EXTI15_10_IRQHandler(void) {
-  // Interrupt handler shared between:
-  // SD_DETECT pin, USER_KEY button and touch screen interrupt
   if (__HAL_GPIO_EXTI_GET_IT(SD_DETECT_PIN) != RESET) {
     HAL_GPIO_EXTI_IRQHandler(SD_DETECT_PIN | TS_INT_PIN);
   } else {
