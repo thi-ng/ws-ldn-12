@@ -20,12 +20,6 @@
 #define TAU_RATE (CT_TAU / (float)SAMPLE_RATE)
 #define HZ_TO_RAD(freq) ((freq)*TAU_RATE)
 
-typedef enum {
-  BUFFER_OFFSET_NONE = 0,
-  BUFFER_OFFSET_HALF,
-  BUFFER_OFFSET_FULL
-} DMABufferState;
-
 typedef struct {
   float phase;
   float freq;
@@ -39,7 +33,6 @@ typedef struct {
 extern SAI_HandleTypeDef haudio_out_sai;
 extern void Error_Handler();
 
-static __IO DMABufferState bufferState = BUFFER_OFFSET_NONE;
 static uint8_t audioBuf[AUDIO_DMA_BUFFER_SIZE];
 
 static CT_XorShift rnd;
@@ -118,30 +111,16 @@ static void renderAudio(int16_t *ptr) {
   }
 }
 
-static void updateAudioBuffer() {
-  if (bufferState == BUFFER_OFFSET_HALF) {
-    int16_t *ptr = (int16_t *)&audioBuf[0];
-    renderAudio(ptr);
-    bufferState = BUFFER_OFFSET_NONE;
-  } else if (bufferState == BUFFER_OFFSET_FULL) {
-    int16_t *ptr = (int16_t *)&audioBuf[0] + AUDIO_DMA_BUFFER_SIZE4;
-    renderAudio(ptr);
-    bufferState = BUFFER_OFFSET_NONE;
-  }
-}
-
 void AUDIO_OUT_SAIx_DMAx_IRQHandler(void) {
   HAL_DMA_IRQHandler(haudio_out_sai.hdmatx);
 }
 
 void BSP_AUDIO_OUT_HalfTransfer_CallBack(void) {
-  bufferState = BUFFER_OFFSET_HALF;
-  updateAudioBuffer();
+  renderAudio((int16_t *)&audioBuf[0]);
 }
 
 void BSP_AUDIO_OUT_TransferComplete_CallBack(void) {
-  bufferState = BUFFER_OFFSET_FULL;
-  updateAudioBuffer();
+  renderAudio((int16_t *)&audioBuf[0] + AUDIO_DMA_BUFFER_SIZE4);
 }
 
 void BSP_AUDIO_OUT_Error_CallBack(void) {
