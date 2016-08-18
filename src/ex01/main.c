@@ -1,6 +1,4 @@
 #include "stm32746g_discovery.h"
-#include "stm32f7xx_hal.h"
-
 #include "common/clockconfig.h"
 
 #define LED_SPEED 100
@@ -10,9 +8,7 @@ volatile int do_blink = 1;
 int main() {
   HAL_Init();
   SystemClock_Config();
-
   BSP_LED_Init(LED_GREEN);
-
   // configure user button in ISR mode
   BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_EXTI);
 
