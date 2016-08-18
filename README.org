@@ -32,6 +32,23 @@ Edit the source file to uncomment different demo modes:
 *** ex03 - Timers
 
 *** ex04 - Oscillators
+[[./src/ex04/main.c][Source]]
+
+Simple oscillator & frequency modulation experiment. The following
+oscillator types are supported for both main osc & modulator:
+
+| *ID* | *Type*                        |
+|------+-------------------------------|
+|    0 | Sine                          |
+|    1 | Saw                           |
+|    2 | Square                        |
+|    3 | Triangle                      |
+|    4 | Saw + Sin                     |
+|    5 | Noise (uses [[http://xoroshiro.di.unimi.it/][Xorshift128]] PRNG) |
+
+*Important:* The =mod_amp= field of the =Oscillator= struct is the
+ modulation amplitude, but since the modulator is acting in the
+ frequency domain, this amplitude too is in Hz.
 
 *** ex05 - Synth basics
 

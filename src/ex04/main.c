@@ -82,7 +82,7 @@ static float compute_osc(size_t type, float phase) {
       } else {
         return ct_mapf(phase, CT_PI, CT_TAU, 1.f, -1.f);
       }
-    case 4:  // tri + sin
+    case 4:  // saw + sin
       if (phase < CT_PI) {
         return ct_mapf(phase, 0.0f, CT_PI, -1.f, 1.f);
       } else {
