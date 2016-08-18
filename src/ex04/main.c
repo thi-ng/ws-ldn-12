@@ -44,13 +44,17 @@ static uint8_t audioBuf[AUDIO_DMA_BUFFER_SIZE];
 
 static CT_XorShift rnd;
 
-static Oscillator osc = {.phase     = 0.0f,
-                         .freq      = HZ_TO_RAD(220.0f),
-                         .type      = 0,
-                         .mod_phase = 0.0f,
-                         .mod_freq  = HZ_TO_RAD(0.5f),
-                         .mod_amp   = HZ_TO_RAD(110.0f),
-                         .mod_type  = 2};
+// clang-format off
+static Oscillator osc = {
+  .phase     = 0.0f,
+  .freq      = HZ_TO_RAD(220.0f),
+  .type      = 0,
+  .mod_phase = 0.0f,
+  .mod_freq  = HZ_TO_RAD(0.5f),
+  .mod_amp   = HZ_TO_RAD(110.0f),
+  .mod_type  = 2
+};
+// clang-format on
 
 int main() {
   CPU_CACHE_Enable();
@@ -99,16 +103,18 @@ static float compute_osc(size_t type, float phase) {
 
 static void renderAudio(int16_t *ptr) {
   size_t len = AUDIO_DMA_BUFFER_SIZE8;
+  int16_t y;
+  float f;
   while (len--) {
     osc.mod_phase += osc.mod_freq;
     if (osc.mod_phase >= CT_TAU) {
       osc.mod_phase -= CT_TAU;
     }
-    float f = osc.freq + osc.mod_amp * compute_osc(osc.mod_type, osc.mod_phase);
-    osc.phase  = ct_wrapf(osc.phase + f, CT_TAU);
-    int16_t yi = ct_clamp16((int32_t)(compute_osc(osc.type, osc.phase) * 32767.f));
-    *ptr++     = yi;
-    *ptr++     = yi;
+    f = osc.freq + osc.mod_amp * compute_osc(osc.mod_type, osc.mod_phase);
+    osc.phase = ct_wrapf(osc.phase + f, CT_TAU);
+    y         = ct_clamp16(compute_osc(osc.type, osc.phase) * 32767.f);
+    *ptr++    = y;
+    *ptr++    = y;
   }
 }
 
