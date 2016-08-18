@@ -64,3 +64,12 @@ set to the root of your STM SDK directory, e.g.
   # flash device
   st-flash --reset write bin/ex01/app.bin 0x8000000
 #+END_SRC
+
+** Contributors
+
+| *Name*          | *Role*                          | *Website* |
+| [[mailto:k@thi.ng][Karsten Schmidt]] | initiator & principal developer | [[http://thi.ng][thi.ng]]    |
+
+** License
+
+This project is open source and licensed under the [[http://www.apache.org/licenses/LICENSE-2.0][Apache Software License 2.0]].
