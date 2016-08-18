@@ -1,4 +1,5 @@
 #include "stm32746g_discovery.h"
+
 #include "common/clockconfig.h"
 
 #define LED_SPEED 100
