@@ -104,6 +104,6 @@
 # %cc936.c
 # %cc949.c
 # %cc950.c
-# %ccsbcs.c
-# %syscall.c
+%ccsbcs.c
+%syscall.c
 # %unicode.c

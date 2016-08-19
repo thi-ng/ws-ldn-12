@@ -81,9 +81,12 @@ static void demoGUI() {
   CTGUI gui;
   CTGUI_TouchState touchState;
   ctgui_init(&gui, 3, &CTGUI_FONT, CTGUI_BG_COLOR, CTGUI_TEXT_COLOR);
-  ctgui_dialbutton(&gui, 0, "Volume", 135, 100, 0.0f, 0.025f, &ctgui_spritesheet_dustknob48, NULL);
-  ctgui_dialbutton(&gui, 1, "Freq", 205, 100, 0.0f, 0.025f, &ctgui_spritesheet_dustknob48, NULL);
-  ctgui_dialbutton(&gui, 2, "Filter", 275, 100, 0.0f, 0.025f, &ctgui_spritesheet_dustknob48, NULL);
+  ctgui_dialbutton(&gui, 0, "Volume", 135, 100, 0.0f, 0.025f,
+                   &ctgui_spritesheet_dustknob48, NULL);
+  ctgui_dialbutton(&gui, 1, "Freq", 205, 100, 0.0f, 0.025f,
+                   &ctgui_spritesheet_dustknob48, NULL);
+  ctgui_dialbutton(&gui, 2, "Filter", 275, 100, 0.0f, 0.025f,
+                   &ctgui_spritesheet_dustknob48, NULL);
 
   BSP_LCD_Clear(gui.col_bg);
   ctgui_force_redraw(&gui);

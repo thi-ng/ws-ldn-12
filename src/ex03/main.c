@@ -11,7 +11,6 @@
 TIM_HandleTypeDef timer;
 static uint8_t isBlinking = 1;
 
-extern void Error_Handler();
 static void initTimer(uint16_t period);
 
 int main(void) {

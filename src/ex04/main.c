@@ -31,10 +31,7 @@ typedef struct {
 } Oscillator;
 
 extern SAI_HandleTypeDef haudio_out_sai;
-extern void Error_Handler();
-
 static uint8_t audioBuf[AUDIO_DMA_BUFFER_SIZE];
-
 static CT_XorShift rnd;
 
 // clang-format off
