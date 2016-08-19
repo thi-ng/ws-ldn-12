@@ -7,6 +7,7 @@
 #include "usbh_diskio.h"
 
 #include "common/clockconfig.h"
+#include "wavfile.h"
 
 #define VOLUME 70
 
@@ -14,22 +15,6 @@
 #define AUDIO_DMA_BUFFER_SIZE2 (AUDIO_DMA_BUFFER_SIZE >> 1)
 
 #define WAVEFILENAME "0:sound.wav"
-
-typedef struct {
-  uint32_t riffTag;
-  uint32_t riffLength;
-  uint32_t waveTag;
-  uint32_t formatTag;
-  uint32_t formatLength;
-  uint16_t audioFormat;
-  uint16_t numChannels;
-  uint32_t sampleRate;
-  uint32_t byteRate;
-  uint16_t blockAlign;
-  uint16_t bits;
-  uint32_t dataTag;
-  uint32_t dataLength;
-} WavHeader;
 
 typedef enum {
   BUFFER_OFFSET_NONE = 0,
@@ -45,13 +30,12 @@ static uint8_t audio_buf[AUDIO_DMA_BUFFER_SIZE];
 static DMABufferState dma_state = BUFFER_OFFSET_NONE;
 
 FIL audio_file;
-WavHeader audio_format;
+CTSS_WavHeader audio_format;
 UINT bytes_read;
 
 static char usb_drive_path[4];
 
 static void process_usbh_message(USBH_HandleTypeDef *host, uint8_t msg);
-static void start_audio_app();
 static void start_playback();
 static void stop_playback();
 static void play_wav_file();
@@ -98,7 +82,7 @@ static void process_usbh_message(USBH_HandleTypeDef *host, uint8_t msg) {
 
 static void start_playback() {
   if (f_open(&audio_file, WAVEFILENAME, FA_READ) == FR_OK) {
-    f_read(&audio_file, &audio_format, sizeof(WavHeader), &bytes_read);
+    f_read(&audio_file, &audio_format, sizeof(CTSS_WavHeader), &bytes_read);
     play_wav_file();
   } else {
     Error_Handler();

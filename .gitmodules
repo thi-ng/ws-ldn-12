@@ -6,3 +6,7 @@
 	path = ext/ct-gui
 	url = https://github.com/thi-ng/ct-gui
 	branch = master
+[submodule "ext/ct-synstack"]
+	path = ext/ct-synstack
+	url = https://github.com/thi-ng/synstack
+	branch = master
