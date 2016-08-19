@@ -75,6 +75,45 @@ output (looping playback).
   port (not HS (highspeed)). This can be changed via the
   =ex05/usbh_conf.h= file.
 
+*** ex06 - thi.ng/synstack basics
+
+[[./src/ex06/main.c][Source]]
+
+First example using [[http://thi.ng/synstack][thi.ng/synstack]] to implement polyphonic synth with
+fully configurable node based DSP graph (1 graph per voice). The graph
+implemented is shown below.
+
+We also define a musical scale to play a randomized, but always
+harmonic sequence and show how to dynamically modify parameters of the
+DSP node.
+
+#+BEGIN_SRC dot :file assets/ex06-dag.png :exports results
+digraph g {
+  rankdir=LR;
+  node[color="black",style="filled",fontname="Inconsolata",fontcolor="white",fontsize=11];
+  edge[fontname="Inconsolata",fontsize=9];
+
+  env[label="AD(S)R"];
+  osc1[label="osc #1\n(spiral)"];
+  osc2[label="osc #2\n(saw-sin)"];
+  mul1[shape="circle",label="*"];
+  mul2[shape="circle",label="*"];
+  sum[shape="circle",label="+"];
+  fb[label="foldback\ndistortion"];
+  filter[label="biquad LPF\n(randomized)"];
+  pan[label="stereo pan"];
+  delay[label="delay"];
+  env -> mul1;
+  env -> mul2;
+  osc1 -> mul1 -> sum;
+  osc2 -> mul2 -> sum;
+  sum -> fb -> filter -> pan -> delay;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:assets/ex06-dag.png]]
+
 ** Building
 
 This repo contains a flexible =Makefile= to build all included
