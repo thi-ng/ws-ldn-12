@@ -10,6 +10,7 @@ ARM / STM32F7 DIY synth workshop (STM32F746-DISCO)
 
 ** Examples
 *** ex01 - blinky
+
 [[./src/ex01/main.c][Source]]
 
 Simple Hello World LED blink example & demo of using EXTI interrupt to
@@ -17,6 +18,7 @@ react to user button. Stops/starts blinking each time button is
 pressed.
 
 *** ex02 - LCD, touchscreen & GUI basics
+
 [[./src/ex02/main.c][Source]]
 
 Basic demonstration of working with BSP LCD & touchscreen modules, as
@@ -30,6 +32,7 @@ Edit the source file to uncomment different demo modes:
 - =demoGUI()= - basic GUI usage example (dials control nothing)
 
 *** ex03 - Timers
+
 [[./src/ex03/main.c][Source]]
 
 Basic timer setup & multi-tasking example. Timer runs @ 10kHz and
@@ -37,6 +40,7 @@ controls simple LED blinking task. Task can be suspended interactively
 by pressing user button.
 
 *** ex04 - Oscillators
+
 [[./src/ex04/main.c][Source]]
 
 Simple oscillator & frequency modulation experiment. The following
@@ -55,7 +59,21 @@ oscillator types are supported for both main osc & modulator:
  modulation amplitude, but since the modulator is acting in the
  frequency domain, this amplitude too is in Hz.
 
-*** ex05 - Synth basics
+*** ex05 - USB stick WAV file streaming playback
+
+[[./src/ex05/main.c][Source]]
+
+This example uses the STM USB Host library & FatFS to access a USB
+memory stick connected to the board. Once USB handshake is complete,
+the app will then attempt to read the file =sound.wav= located in the
+root of the USB filesystem and start streaming to the headphone audio
+output (looping playback).
+
+*Important:*
+- The WAV file MUST be in 44.1kHz, 16bit stereo format
+- The example is currently configured to use the USB FS (fullspeed)
+  port (not HS (highspeed)). This can be changed via the
+  =ex05/usbh_conf.h= file.
 
 ** Building
 
