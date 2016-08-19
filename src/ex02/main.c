@@ -1,23 +1,14 @@
 #include "stm32f7xx_hal.h"
 
-#include "ct-gui/bt_dustknob48_12.h"
 #include "ct-gui/gui_stm32.h"
 #include "ct-head/random.h"
 
 #include "common/clockconfig.h"
 
+// sprite sheet definition from ct-gui lib
+extern const CTGUI_SpriteSheet ctgui_spritesheet_dustknob48;
+// touch event state
 static TS_StateTypeDef rawTouchState;
-
-// clang-format off
-// sprite sheet definition: 12 steps, 48x48, RGB (24bit)
-static const CTGUI_SpriteSheet dialSheet = {
-  .pixels = ctgui_dustknob48_12_rgb888,
-  .sprite_width = 48,
-  .sprite_height = 48,
-  .num_sprites = 12,
-  .format = CM_RGB888
-};
-// clang-format on
 
 static void demoWelcome();
 static void demoScribble();
@@ -29,6 +20,7 @@ int main() {
   SystemClock_Config();
   BSP_LCD_Init();
 
+  // only continue if touch screen init ok
   if (BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize()) == TS_OK) {
     BSP_LCD_LayerDefaultInit(LTDC_ACTIVE_LAYER, SDRAM_DEVICE_ADDR);
     BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
@@ -88,10 +80,10 @@ static void demoScribble() {
 static void demoGUI() {
   CTGUI gui;
   CTGUI_TouchState touchState;
-  ctgui_init(&gui, 3, &CTGUI_FONT, 0xff59626c, 0xffffffff);
-  ctgui_dialbutton(&gui, 0, "Volume", 135, 100, 0.0f, 0.025f, &dialSheet, NULL);
-  ctgui_dialbutton(&gui, 1, "Freq", 205, 100, 0.0f, 0.025f, &dialSheet, NULL);
-  ctgui_dialbutton(&gui, 2, "Filter", 275, 100, 0.0f, 0.025f, &dialSheet, NULL);
+  ctgui_init(&gui, 3, &CTGUI_FONT, CTGUI_BG_COLOR, CTGUI_TEXT_COLOR);
+  ctgui_dialbutton(&gui, 0, "Volume", 135, 100, 0.0f, 0.025f, &ctgui_spritesheet_dustknob48, NULL);
+  ctgui_dialbutton(&gui, 1, "Freq", 205, 100, 0.0f, 0.025f, &ctgui_spritesheet_dustknob48, NULL);
+  ctgui_dialbutton(&gui, 2, "Filter", 275, 100, 0.0f, 0.025f, &ctgui_spritesheet_dustknob48, NULL);
 
   BSP_LCD_Clear(gui.col_bg);
   ctgui_force_redraw(&gui);
