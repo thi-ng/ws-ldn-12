@@ -7,6 +7,7 @@
 #include "foldback.h"
 #include "node_ops.h"
 #include "osc.h"
+#include "osc_noise.h"
 #include "panning.h"
 #include "sdram_delay.h"
 #include "synth.h"
@@ -14,7 +15,7 @@
 #include "common/clockconfig.h"
 #include "ct-head/random.h"
 
-#define VOLUME 90
+#define VOLUME 80
 #define SAMPLE_RATE 44100
 
 #define AUDIO_DMA_BUFFER_SIZE 512
@@ -49,11 +50,14 @@ int main() {
   }
 
   ct_smush_init(&rnd, 0xcafebabe);
+  ctss_osc_noise_init();
   ctss_init(&synth, 2);
   ctss_add_global_lfo(&synth, ctss_osc("lfo1", ctss_process_osc_sin, 0.0f,
                                        HZ_TO_RAD(0.125f), 0.4f, 0.8f));
   ctss_add_global_lfo(&synth, ctss_osc("lfo2", ctss_process_osc_sin, 0.0f,
                                        HZ_TO_RAD(0.25f), 0.495f, 0.5f));
+  ctss_add_global_lfo(&synth, ctss_osc("lfo3", ctss_process_osc_tri, 0.0f,
+                                       HZ_TO_RAD(0.1f), 0.499f, 0.5f));
 
   for (uint8_t i = 0; i < synth.numStacks; i++) {
     init_voice(&synth, &synth.stacks[i]);
@@ -76,20 +80,27 @@ int main() {
   return 0;
 }
 
+// see README for DSP graph visualization
+
 static void init_voice(CTSS_Synth *synth, CTSS_DSPStack *stack) {
   CTSS_DSPNode *env =
       ctss_adsr("env", synth->lfo[0], 0.01f, 0.05f, 0.85f, 1.0f, 0.25f);
   CTSS_DSPNode *osc1 = ctss_osc("osc1", ctss_process_osc_spiral, 0, 0, 0.3f, 0);
   CTSS_DSPNode *osc2 = ctss_osc("osc2", ctss_process_osc_sawsin, 0, 0, 0.3f, 0);
+  CTSS_DSPNode *osc3 =
+      ctss_osc("osc3", ctss_process_osc_noise, 0, 0, 0.025f, 0);
   CTSS_DSPNode *sum  = ctss_op4("sum", osc1, env, osc2, env, ctss_process_madd);
-  CTSS_DSPNode *fb   = ctss_foldback("fb", sum, 0.1, 4.0f);
+  CTSS_DSPNode *nsum = ctss_op2("nsum", osc3, synth->lfo[2], ctss_process_mult);
+  CTSS_DSPNode *sum2 = ctss_op2("sum2", sum, nsum, ctss_process_sum);
+  CTSS_DSPNode *fb   = ctss_foldback("fb", sum2, 0.1, 4.0f);
   CTSS_DSPNode *filter =
       ctss_filter_biquad("filter", LPF, fb, 1000.0f, 0.0f, 0.5f);
   CTSS_DSPNode *pan = ctss_panning("pan", filter, synth->lfo[1], 0.0f);
   CTSS_DSPNode *delay =
       ctss_delay_sdram("delay", pan, (uint32_t)(SAMPLE_RATE * 0.5f), 0.9f, 2);
-  CTSS_DSPNode *nodes[] = {env, osc1, osc2, sum, fb, filter, pan, delay};
-  ctss_build_stack(stack, nodes, 8);
+  CTSS_DSPNode *nodes[] = {env,  osc1, osc2,   osc3, sum,  nsum,
+                           sum2, fb,   filter, pan,  delay};
+  ctss_build_stack(stack, nodes, 11);
 }
 
 static void trigger_note() {

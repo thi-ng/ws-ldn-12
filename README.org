@@ -87,6 +87,9 @@ We also define a musical scale to play a randomized, but always
 harmonic sequence and show how to dynamically modify parameters of the
 DSP node.
 
+*Note*: The graph doesn't show global LFOs, which are used for various
+ modulation purposes (env mod, freq etc.).
+
 #+BEGIN_SRC dot :file assets/ex06-dag.png :exports results
 digraph g {
   rankdir=LR;
@@ -122,12 +125,12 @@ times and not be limited by the <320KB of available on-chip RAM of the
 STM32F746-DISCO board, this example uses the 8MB "external" SDRAM
 (still on-board, just not in-chip), a [[./src/common/sdram_alloc.c][custom memory allocator]]
 (targetting SDRAM) and shows how to easily extend Synstack with custom
-DSP nodes - in this case a [[./src/ex07/sdram_delay.c][new delay node]], which stores its long delay
-line in SDRAM, but then has to work with windowed sections in main RAM
-and mirror them back.
+DSP nodes - in this case a [[./src/ex07/osc_noise.c][noise oscillator]] and a [[./src/ex07/sdram_delay.c][new delay node]],
+which stores its long delay line in SDRAM, but then has to work with
+windowed sections in main RAM and mirror them back.
 
-We also update the DSP node graph to add foldback distortion and
-replace the old delay with the new one...
+We also update the DSP node graph to add the new oscillator, foldback
+distortion and replace the old delay with the new one...
 
 #+BEGIN_SRC dot :file assets/ex07-dag.png :exports results
 digraph g {
@@ -138,18 +141,22 @@ digraph g {
   env[label="AD(S)R"];
   osc1[label="osc #1\n(spiral)"];
   osc2[label="osc #2\n(saw-sin)"];
+  osc3[label="osc #3\n(noise)", color="red"];
   mul1[shape="circle",label="*"];
   mul2[shape="circle",label="*"];
+  mul3[shape="circle",label="*"];
   sum[shape="circle",label="+"];
+  sum2[shape="circle",label="+"];
   fb[label="foldback\ndistortion", color="red"];
   filter[label="biquad LPF\n(randomized)"];
   pan[label="stereo pan"];
   delay[label="SDRAM delay", color="red"];
   env -> mul1;
   env -> mul2;
-  osc1 -> mul1 -> sum;
+  osc1 -> mul1 -> sum -> sum2;
   osc2 -> mul2 -> sum;
-  sum -> fb -> filter -> pan -> delay;
+  osc3 -> mul3 -> sum2;
+  sum2 -> fb -> filter -> pan -> delay;
 }
 #+END_SRC
 
