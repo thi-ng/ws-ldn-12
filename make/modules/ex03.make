@@ -1,3 +1,3 @@
 catalog = make/sources.txt
 
-CFLAGS += -O3
+CFLAGS += -Os

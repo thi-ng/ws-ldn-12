@@ -5,4 +5,4 @@ USE_FATFS = 1
 
 USER_INCLUDES += -Isrc/ex05 -Iext/ct-synstack/src
 
-CFLAGS += -O3
+CFLAGS += -O3 -ffast-math
