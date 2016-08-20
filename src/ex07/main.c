@@ -83,8 +83,8 @@ int main() {
 // see README for DSP graph visualization
 
 static void init_voice(CTSS_Synth *synth, CTSS_DSPStack *stack) {
-  CTSS_DSPNode *env =
-      ctss_adsr("env", synth->lfo[0], 0.01f, 0.05f, 0.85f, 1.0f, 0.25f);
+  CTSS_DSPNode *env = ctss_adsr("env", synth->lfo[0]);
+  ctss_configure_adsr(env, 0.01f, 0.05f, 0.85f, 1.0f, 0.25f, false);
   CTSS_DSPNode *osc1 = ctss_osc("osc1", ctss_process_osc_spiral, 0, 0, 0.3f, 0);
   CTSS_DSPNode *osc2 = ctss_osc("osc2", ctss_process_osc_sawsin, 0, 0, 0.3f, 0);
   CTSS_DSPNode *osc3 =
