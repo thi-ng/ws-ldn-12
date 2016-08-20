@@ -99,10 +99,52 @@ digraph g {
   mul1[shape="circle",label="*"];
   mul2[shape="circle",label="*"];
   sum[shape="circle",label="+"];
-  fb[label="foldback\ndistortion"];
   filter[label="biquad LPF\n(randomized)"];
   pan[label="stereo pan"];
   delay[label="delay"];
+  env -> mul1;
+  env -> mul2;
+  osc1 -> mul1 -> sum;
+  osc2 -> mul2 -> sum;
+  sum -> filter -> pan -> delay;
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:assets/ex06-dag.png]]
+
+*** ex07 - thi.ng/synstack & custom SDRAM delay
+
+[[./src/ex07/main.c][Source]]
+
+Similar setup to *ex06* above, however to enable much longer delay
+times and not be limited by the <320KB of available on-chip RAM of the
+STM32F746-DISCO board, this example uses the 8MB "external" SDRAM
+(still on-board, just not in-chip), a [[./src/common/sdram_alloc.c][custom memory allocator]]
+(targetting SDRAM) and shows how to easily extend Synstack with custom
+DSP nodes - in this case a [[./src/ex07/sdram_delay.c][new delay node]], which stores its long delay
+line in SDRAM, but then has to work with windowed sections in main RAM
+and mirror them back.
+
+We also update the DSP node graph to add foldback distortion and
+replace the old delay with the new one...
+
+#+BEGIN_SRC dot :file assets/ex07-dag.png :exports results
+digraph g {
+  rankdir=LR;
+  node[color="black",style="filled",fontname="Inconsolata",fontcolor="white",fontsize=11];
+  edge[fontname="Inconsolata",fontsize=9];
+
+  env[label="AD(S)R"];
+  osc1[label="osc #1\n(spiral)"];
+  osc2[label="osc #2\n(saw-sin)"];
+  mul1[shape="circle",label="*"];
+  mul2[shape="circle",label="*"];
+  sum[shape="circle",label="+"];
+  fb[label="foldback\ndistortion", color="red"];
+  filter[label="biquad LPF\n(randomized)"];
+  pan[label="stereo pan"];
+  delay[label="SDRAM delay", color="red"];
   env -> mul1;
   env -> mul2;
   osc1 -> mul1 -> sum;
@@ -112,7 +154,7 @@ digraph g {
 #+END_SRC
 
 #+RESULTS:
-[[file:assets/ex06-dag.png]]
+[[file:assets/ex07-dag.png]]
 
 ** Building
 
