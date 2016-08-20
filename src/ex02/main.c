@@ -5,8 +5,8 @@
 
 #include "common/clockconfig.h"
 
-// sprite sheet definition from ct-gui lib
-extern const CTGUI_SpriteSheet ctgui_spritesheet_dustknob48;
+extern const CTGUI_SpriteSheet ctgui_spritesheet_moogknob50;
+
 // touch event state
 static TS_StateTypeDef rawTouchState;
 
@@ -26,9 +26,9 @@ int main() {
     BSP_LCD_SelectLayer(LTDC_ACTIVE_LAYER);
 
     // Only enable ONE of the following:
-    demoWelcome();
+    //demoWelcome();
     //demoScribble();
-    //demoGUI();
+    demoGUI();
   }
   return 0;
 }
@@ -82,11 +82,11 @@ static void demoGUI() {
   CTGUI_TouchState touchState;
   ctgui_init(&gui, 3, &CTGUI_FONT, CTGUI_BG_COLOR, CTGUI_TEXT_COLOR);
   ctgui_dialbutton(&gui, 0, "Volume", 135, 100, 0.0f, 0.025f,
-                   &ctgui_spritesheet_dustknob48, NULL);
+                   &ctgui_spritesheet_moogknob50, NULL);
   ctgui_dialbutton(&gui, 1, "Freq", 205, 100, 0.0f, 0.025f,
-                   &ctgui_spritesheet_dustknob48, NULL);
+                   &ctgui_spritesheet_moogknob50, NULL);
   ctgui_dialbutton(&gui, 2, "Filter", 275, 100, 0.0f, 0.025f,
-                   &ctgui_spritesheet_dustknob48, NULL);
+                   &ctgui_spritesheet_moogknob50, NULL);
 
   BSP_LCD_Clear(gui.col_bg);
   ctgui_force_redraw(&gui);
