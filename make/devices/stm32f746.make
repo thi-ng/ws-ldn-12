@@ -4,7 +4,7 @@ DEVICE_DIR = $(CMSIS_DIR)/Device/ST/STM32F7xx
 HAL_DIR = $(STM_SRC_ROOT)/STM32F7xx_HAL_Driver
 BSP_DIR = $(STM_SRC_ROOT)/BSP/STM32746G-Discovery
 
-DEFINES += -DSTM32F746xx
+DEFINES += -DSTM32F746xx -DUSE_STM32746G_DISCO
 
 CFLAGS += -mthumb -mcpu=cortex-m7 -mfloat-abi=hard -mfpu=fpv5-sp-d16
 LD_FLAGS += -Tstm32f746.ld
