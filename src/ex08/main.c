@@ -83,8 +83,8 @@ static void init_synth() {
 static void init_voice(CTSS_Synth *synth, CTSS_DSPStack *stack) {
   CTSS_DSPNode *env = ctss_adsr("env", synth->lfo[0]);
   ctss_configure_adsr(env, 0.01f, 0.05f, 0.85f, 1.0f, 0.25f, false);
-  CTSS_DSPNode *osc1 = ctss_osc("osc1", ctss_process_osc_spiral, 0, 0, 0.2f, 0);
-  CTSS_DSPNode *osc2 = ctss_osc("osc2", ctss_process_osc_sawsin, 0, 0, 0.2f, 0);
+  CTSS_DSPNode *osc1 = ctss_osc("osc1", ctss_process_osc_spiral, 0, 0, 0.1f, 0);
+  CTSS_DSPNode *osc2 = ctss_osc("osc2", ctss_process_osc_sawsin, 0, 0, 0.1f, 0);
   CTSS_DSPNode *osc3 =
       ctss_osc("osc3", ctss_process_osc_noise, 0, 0, 0.015f, 0);
   CTSS_DSPNode *sum  = ctss_op4("sum", osc1, env, osc2, env, ctss_process_madd);
