@@ -1,7 +1,8 @@
 #include "sdram_alloc.h"
 #include "ct-head/math.h"
 
-static uint32_t sdram_heap_ptr = SDRAM_DEVICE_ADDR;
+// start of heap = SDRAM base address PLUS length of screen buffer
+static uint32_t sdram_heap_ptr = SDRAM_DEVICE_ADDR + 480 * 276 * 4;
 static uint32_t sdram_heap_end = SDRAM_DEVICE_ADDR + SDRAM_DEVICE_SIZE;
 static uint32_t sdram_zero[32] = {0};
 
