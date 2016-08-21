@@ -125,11 +125,11 @@ times and not be limited by the <320KB of available on-chip RAM of the
 STM32F746-DISCO board, this example uses the 8MB "external" SDRAM
 (still on-board, just not in-chip), a [[./src/common/sdram_alloc.c][custom memory allocator]]
 (targetting SDRAM) and shows how to easily extend Synstack with custom
-DSP nodes - in this case a [[./src/ex07/osc_noise.c][noise oscillator]] and a [[./src/ex07/sdram_delay.c][new delay node]],
+DSP nodes - in this case a [[./src/synth_extras/osc_noise.c][noise oscillator]] and a [[./src/synth_extras/sdram_delay.c][new delay node]],
 which stores its long delay line in SDRAM, but then has to work with
-windowed sections in main RAM and mirror them back.
+small, windowed sections in main RAM and mirror them back & forth.
 
-We also update the DSP node graph to add the new oscillator, foldback
+We also updated the DSP node graph to add the new oscillator, foldback
 distortion and replace the old delay with the new one...
 
 #+BEGIN_SRC dot :file assets/ex07-dag.png :exports results
@@ -162,6 +162,19 @@ digraph g {
 
 #+RESULTS:
 [[file:assets/ex07-dag.png]]
+
+*** ex08 - Synstack & MIDI
+
+[[./src/ex08/main.c][Source]]
+
+Based on *ex07* synth setup, but with USB MIDI support to turn synth
+into actual instrument (4 voice polyphonic). Via the optional
+=LOG_MIDI= flag (defined in [[./make/modules/ex08.make][ex08.make]]), received MIDI message can be
+logged to the board's LCD screen.
+
+*Note:* Currently the synth ignores MIDI Note Off messages, all voices
+only use an ADR envelope, without "sustain" phase. This will be added
+later...
 
 ** Building
 
