@@ -32,9 +32,6 @@ static uint8_t audio_buf[AUDIO_DMA_BUFFER_SIZE] = {0};
 static uint8_t midi_receive_buf[USB_MIDI_RX_BUFFER_SIZE];
 static uint32_t voice_id = 0;
 
-#ifdef LOG_MIDI
-#endif
-
 static CTSS_Synth synth;
 static CT_Smush rnd;
 
