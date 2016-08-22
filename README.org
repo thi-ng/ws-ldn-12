@@ -5,11 +5,13 @@ ARM / STM32F7 DIY synth workshop (STM32F746-DISCO)
 
 ** Project setup
 
-This repo contains 8 sub-projects, each compilable as standalone
-application. The repo also includes various support libraries of the
-thi.ng collection as Git submodules, located in the [[./ext][/ext]] folder.
+This repo contains 8 sub-projects, all described below and each
+compilable as standalone application. The repo also includes various
+support libraries of the thi.ng collection as Git submodules, located
+in the [[./ext][/ext]] folder.
 
 #+BEGIN_SRC shell
+  # clone with submodules
   git clone https://github.com/thi-ng/ws-ldn-12 --recursive
 #+END_SRC
 
@@ -71,7 +73,7 @@ Basic demonstration of working with BSP LCD & touchscreen modules, as
 well as intro to working w/ external libraries (here
 [[http://thi.ng/ct-gui][thi.ng/ct-gui]]).
 
-Edit the source file to uncomment different demo modes:
+Edit the source file to [[./src/ex02/main.c#L28][uncomment different demo modes]]:
 
 - =demoWelcome()= - simple text rendering & random dots, non-interactive
 - =demoScribble()= - 5 point multi-touch drawing
