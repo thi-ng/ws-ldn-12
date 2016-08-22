@@ -1,7 +1,11 @@
 * thi.ng/ws-ldn-12
 ARM / STM32F7 DIY synth workshop (STM32F746-DISCO)
 
-*[[https://soundcloud.com/forthcharlie/sets/stm32f4][Example tracks on Soundcloud]]*
+[[./assets/ws-ldn-12-minigorille.jpg]]
+
+Photo by Lysandre Follet
+
+*[[https://soundcloud.com/forthcharlie/sets/stm32f4][Check out demo tracks on Soundcloud]]*
 
 ** Project setup
 
