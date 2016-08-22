@@ -46,7 +46,7 @@ int main() {
   ct_smush_init(&rnd, 0xcafebabe);
   ctss_init(&synth, 7);
   ctss_add_global_lfo(&synth, ctss_osc("lfo1", ctss_process_osc_sin, 0.0f,
-                                       HZ_TO_RAD(0.125f), 0.4f, 0.8f));
+                                       HZ_TO_RAD(0.125f), 0.3f, 0.8f));
   ctss_add_global_lfo(&synth, ctss_osc("lfo2", ctss_process_osc_sin, 0.0f,
                                        HZ_TO_RAD(0.25f), 0.495f, 0.5f));
 
@@ -73,9 +73,9 @@ int main() {
 
 static void init_voice(CTSS_Synth *synth, CTSS_DSPStack *stack) {
   CTSS_DSPNode *env = ctss_adsr("env", synth->lfo[0]);
-  ctss_configure_adsr(env, 0.01f, 0.05f, 0.85f, 1.0f, 0.25f, false);
-  CTSS_DSPNode *osc1 = ctss_osc("osc1", ctss_process_osc_spiral, 0, 0, 0.3f, 0);
-  CTSS_DSPNode *osc2 = ctss_osc("osc2", ctss_process_osc_sawsin, 0, 0, 0.3f, 0);
+  ctss_configure_adsr(env, 0.01f, 0.035f, 0.8f, 1.0f, 0.15f, false);
+  CTSS_DSPNode *osc1 = ctss_osc("osc1", ctss_process_osc_spiral, 0, 0, 0.22f, 0);
+  CTSS_DSPNode *osc2 = ctss_osc("osc2", ctss_process_osc_sawsin, 0, 0, 0.22f, 0);
   CTSS_DSPNode *sum  = ctss_op4("sum", osc1, env, osc2, env, ctss_process_madd);
   CTSS_DSPNode *filter =
       ctss_filter_biquad("filter", LPF, sum, 1000.0f, 0.0f, 0.5f);
@@ -94,10 +94,10 @@ static void trigger_note() {
   CTSS_DSPStack *s = &synth.stacks[voice_id];
   ctss_reset_adsr(NODE_ID(s, "env"));
   NODE_ID_STATE(CTSS_OscState, s, "osc1")->freq = freq;
-  NODE_ID_STATE(CTSS_OscState, s, "osc2")->freq = freq * 0.51;
+  NODE_ID_STATE(CTSS_OscState, s, "osc2")->freq = freq * 0.505;
   ctss_calculate_biquad_coeff(NODE_ID(s, "filter"), LPF,
                               2800.0f + sinf(time * 0.1f) * 2400.0f, -18.0f,
-                              ct_smush_minmax(&rnd, 0.25f, 2.0f));
+                              ct_smush_minmax(&rnd, 0.075f, 2.0f));
   ctss_activate_stack(s);
   note_id  = (note_id + 1) % 8;
   voice_id = (voice_id + 1) % synth.numStacks;
