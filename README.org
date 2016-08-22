@@ -8,7 +8,11 @@ ARM / STM32F7 DIY synth workshop (STM32F746-DISCO)
 This repo contains 8 sub-projects, all described below and each
 compilable as standalone application. The repo also includes various
 support libraries of the thi.ng collection as Git submodules, located
-in the [[./ext][/ext]] folder.
+in the [[./ext][/ext]] folder:
+
+- [[http://thi.ng/ct-gui][ct-gui]] - tiny GUI library
+- [[http://thi.ng/ct-head][ct-head]] - common headers, macros & utils
+- [[http://thi.ng/synstack][ct-synstack]] - softsynth / DSP engine
 
 #+BEGIN_SRC shell
   # clone with submodules
