@@ -3,10 +3,56 @@ ARM / STM32F7 DIY synth workshop (STM32F746-DISCO)
 
 [[http://workshop.thi.ng/#WS-LDN-12][Workshop details & signup]]
 
-** Resources
+** Project setup
 
-- http://asm.thi.ng/ - links to all required SDK & build tools,
-  references, learning resources...
+This repo contains 8 sub-projects, each compilable as standalone
+application. The repo also includes various support libraries of the
+thi.ng collection as Git submodules, located in the [[./ext][/ext]] folder.
+
+#+BEGIN_SRC shell
+  git clone https://github.com/thi-ng/ws-ldn-12 --recursive
+#+END_SRC
+
+*** Other 3rd party dependecies
+
+- [[http://www.st.com/web/en/catalog/tools/PF261909][STM32 CubeF7 SDK]]
+- [[https://launchpad.net/gcc-arm-embedded][GCC ARM toolchain]]
+- [[https://github.com/texane/stlink][ST-Link]]
+- [[https://gnuarmeclipse.github.io/openocd/releases/][OpenOCD]] (optional, using dev version w/ STM32F746 support)
+** Building
+
+This repo uses a flexible =Makefile= to build all included
+projects - *no IDE required!* The setup features:
+
+- easily customizable device config & linker scripts
+- no requirement to manually copy STM Cube SDK sources
+- catalog file(s) to selectively exclude various SDK source files (see
+  [[./make/sources.txt][/make/sources.txt]], can be overridden per project)
+- config flags to include USBH & FatFs middlewares
+- support for multiple sub-projects (with & without shared sources)
+- individual module (sub-project) configs (e.g. [[./make/modules/ex08.make][/make/modules/ex08.make]])
+- separate build & target folders for each module
+
+Currently only the STM32F746-DISCO board is supported, but additional
+board configurations can be easily added (see [[./make/devices/][/make/devices/]] for
+reference).
+
+*IMPORTANT:* The =Makefile= requires the env var =STM_CUBE_HOME= to be
+set to the root of your STM SDK directory, e.g.
+=~/dev/arm/STM32Cube_FW_F7_V1.4.0=.
+
+#+BEGIN_SRC shell
+  export STM_CUBE_HOME=~/dev/arm/STM32Cube_FW_F7_V1.4.0
+
+  make module=ex01 clean
+  make module=ex01 -j4
+
+  # flash device (0x800000 is ROM start address)
+  st-flash --reset write bin/ex01/app.bin 0x8000000
+
+  # combine for improved usability in terminal
+  make module=ex01 -j4 && st-flash --reset write bin/ex01/app.bin 0x8000000
+#+END_SRC
 
 ** Examples
 *** ex01 - blinky
@@ -175,38 +221,10 @@ logged to the board's LCD screen.
 *Note:* Currently the synth only accepts MIDI Note On messages and
 ignores MIDI Note Off's, since all voices only use an ADR envelope,
 without "sustain" phase. This will be added later...
+** Resources
 
-** Building
-
-This repo contains a flexible =Makefile= to build all included
-projects. The setup features:
-
-- easily customizable device config & linker scripts
-- no requirement to manually copy STM Cube SDK sources
-- catalog file(s) to selectively exclude various SDK source files (see
-  [[./make/sources.txt][/make/sources.txt]], can be overridden per project)
-- config flags to include USBH & FatFs middlewares
-- support for multiple sub-projects (with & without shared sources)
-- individual module (sub-project) configs (e.g. [[./make/modules/ex01.make][/make/modules/ex01.make]])
-- separate build & target folders for each module
-
-Currently only the STM32F746-DISCO board is supported, but additional
-board configurations can be easily added (see [[./make/devices/][/make/devices/]] for
-reference).
-
-*IMPORTANT:* The =Makefile= requires the env var =STM_CUBE_HOME= to be
-set to the root of your STM SDK directory, e.g.
-=~/dev/arm/STM32Cube_FW_F7_V1.4.0=.
-
-#+BEGIN_SRC shell
-  export STM_CUBE_HOME=~/dev/arm/STM32Cube_FW_F7_V1.4.0
-
-  make module=ex01 clean
-  make module=ex01 -j4
-
-  # flash device
-  st-flash --reset write bin/ex01/app.bin 0x8000000
-#+END_SRC
+- http://asm.thi.ng/ - links to all required SDK & build tools,
+  references, learning resources...
 
 ** Contributors
 
